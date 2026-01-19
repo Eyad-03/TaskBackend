@@ -26,6 +26,26 @@ function DisplayCategories() {
     fetchCategories();
   }, []);
 
+  async function handleDeleteCategory(categoryId) {
+    
+    try
+    {
+      const res = await api.delete(`/admin/categories/${categoryId}`)
+      if(res.status===200)
+      {
+        setCategories((curCategory)=>curCategory.filter((category)=>category._id!==categoryId))
+        toast.success('delete success')
+      }
+    }
+
+    catch(err)
+    {
+      toast.error('faild delete category')
+      console.log(err);
+    }
+
+  }
+
   return (
     <>
 
@@ -48,7 +68,7 @@ function DisplayCategories() {
                 <td>{category.description || "category description"}</td>
                 <td>
                   <button>Edit</button>
-                  <button>Delete</button>
+                  <button onClick={()=>handleDeleteCategory(category._id)}>Delete</button>
                 </td>
               </tr>
             );

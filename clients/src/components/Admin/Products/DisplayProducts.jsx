@@ -24,6 +24,29 @@ function DisplayProducts() {
     fetchProducts();
   }, []);
 
+ async function handleDeleteProduct(productId)
+  {
+
+    try
+    {
+      const res = await api.delete(`/admin/products/${productId}`)
+
+      if (res.status === 200) {
+      setProducts((curProduct)=>curProduct.filter((product)=>productId!==product._id))
+
+       toast.success(res.data.message);
+      }
+
+    }
+
+
+    catch (err) {
+      toast.error("Failed to delete product");
+      console.log(err);
+    }
+
+  }
+
   return (
     <>
       <h3>Products</h3>
@@ -60,7 +83,7 @@ function DisplayProducts() {
                 <td>{product.category}</td>
                 <td>
                   <button>Edit</button>
-                  <button>Delete</button>
+                  <button onClick={()=>handleDeleteProduct(product._id)}>Delete</button>
                 </td>
               </tr>
             );
