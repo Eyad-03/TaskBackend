@@ -6,6 +6,15 @@ import api from "../../../api.js";
 function DisplayProducts() {
   const [products, setProducts] = useState([]);
   const [showForm, setShowForm] = useState(false);
+    const [editedId, setEditedId] = useState(null);
+    const [editedProduct, setEditedProduct] = useState({
+    name: "",
+    description: "",
+    price: "",
+    thumbnail: "",
+    stock: "",
+    category: "",
+    });
   const [newProduct, setNewProduct] = useState({
     name: "",
     description: "",
@@ -68,6 +77,20 @@ function DisplayProducts() {
     }
   };
 
+
+    const handleSave = async (id) => {
+    try {
+      const res =await api.put(`/admin/products/${id}`, editedProduct);
+      toast.success("product update");
+      setEditedId(null)
+      fetchProducts()
+    } catch (err) {
+      toast.error("faild update");
+    }
+    
+    
+  };
+
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -91,27 +114,142 @@ function DisplayProducts() {
         </thead>
         <tbody>
           {products.map((product, index) => {
+            const isEditing = editedId === product._id;
             return (
               <tr key={product._id}>
                 <td>{index + 1}</td>
-                <td>{product.name}</td>
-                <td>{product.price}</td>
-                <td>{product.stock}</td>
-                <td>{product.description || "product description"}</td>
+
                 <td>
-                  <img
-                    src={product.thumbnail}
-                    alt={product.name}
-                    width="50"
-                    height="50"
-                  />
+                  {isEditing ? (
+                    <input
+                      name="name"
+                      value={editedProduct.name}
+                      onChange={(e) =>
+                        setEditedProduct({
+                          ...editedProduct,
+                          name: e.target.value,
+                        })
+                      }
+                    />
+                  ) : (
+                    product.name
+                  )}
                 </td>
-                <td>{product.category}</td>
+
                 <td>
-                  <button>Edit</button>
-                  <button onClick={() => handleDeleteProduct(product._id)}>
-                    Delete
-                  </button>
+                  {isEditing ? (
+                    <input
+                      name="description"
+                      value={editedProduct.description}
+                      onChange={(e) =>
+                        setEditedProduct({
+                          ...editedProduct,
+                          description: e.target.value,
+                        })
+                      }
+                    />
+                  ) : (
+                    product.description
+                  )}
+                </td>
+
+                <td>
+                  {isEditing ? (
+                    <input
+                      name="price"
+                      value={editedProduct.price}
+                      onChange={(e) =>
+                        setEditedProduct({
+                          ...editedProduct,
+                          price: e.target.value,
+                        })
+                      }
+                    />
+                  ) : (
+                    product.price
+                  )}
+                </td>
+
+                <td>
+                  {isEditing ? (
+                    <input
+                      name="thumbnail"
+                      value={editedProduct.thumbnail}
+                      onChange={(e) =>
+                        setEditedProduct({
+                          ...editedProduct,
+                          thumbnail: e.target.value,
+                        })
+                      }
+                    />
+                  ) : (
+                    product.thumbnail
+                  )}
+                </td>
+
+                                <td>
+                  {isEditing ? (
+                    <input
+                      name="stock"
+                      value={editedProduct.stock}
+                      onChange={(e) =>
+                        setEditedProduct({
+                          ...editedProduct,
+                          stock: e.target.value,
+                        })
+                      }
+                    />
+                  ) : (
+                    product.stock
+                  )}
+                </td>
+
+
+                  <td>
+                  {isEditing ? (
+                    <input
+                      name="category"
+                      value={editedProduct.category}
+                      onChange={(e) =>
+                        setEditedProduct({
+                          ...editedProduct,
+                          name: e.target.value,
+                        })
+                      }
+                    />
+                  ) : (
+                    product.category
+                  )}
+                </td>
+
+                <td>
+                  {isEditing ? (
+                    <>
+                      <button onClick={() => handleSave(product._id)}>
+                        save
+                      </button>
+                      <button>cancel</button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => {
+                          setEditedId(product._id);
+                          setEditedProduct({
+                            name: product.name,
+                            description: product.description,
+                          });
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteProduct(product._id)}
+                      >
+                        Delete
+                      </button>
+                    </>
+                  )}
                 </td>
               </tr>
             );

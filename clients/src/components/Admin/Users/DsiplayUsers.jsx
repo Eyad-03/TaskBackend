@@ -6,6 +6,7 @@ import api from "../../../api.js";
 function DisplayUsers() {
   const [users, setUsers] = useState([]);
   const[showForm,setShowForm]=useState(false)
+  const [searchItem,setSearchItem]=useState('')
   const [newUser,setNewUser]=useState(
     {
       name:"",
@@ -94,6 +95,11 @@ const handleAddUser = async (e) => {
       <button onClick={()=>setShowForm(!showForm)}>
         Add user
       </button>
+      <input
+      placeholder="search..."
+      value={searchItem}
+      onChange={(e)=>setSearchItem(e.target.value)}
+      />
 
       <h3>Users</h3>
       <table>
@@ -107,7 +113,18 @@ const handleAddUser = async (e) => {
           </tr>
         </thead>
         <tbody>
-          {users.map((user, index) => {
+          {users.filter((user)=> 
+
+          user.name.toLowerCase().includes(searchItem.toLowerCase()) ||
+          user.email.includes(searchItem.toLowerCase())
+          
+        
+        )
+          
+          
+          
+          
+          .map((user, index) => {
             return (
               <tr key={user._id}>
                 <td>{index + 1}</td>
