@@ -12,9 +12,9 @@ import { checkRole } from "../middleware/checkRole.Middleware.js";
 
 const router = express.Router();
 
-router.get("/products", protect, getAllProducts);
+router.get("/products",  getAllProducts);
 
-router.post("/admin/products", protect, adminOnly, createProduct);
+router.post("/admin/products",  createProduct);
 
 router.get("/products/:id", protect, getProductById);
 

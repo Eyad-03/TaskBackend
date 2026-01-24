@@ -5,6 +5,14 @@ import api from "../../../api.js";
 
 function DisplayCategories() {
   const [categories, setCategories] = useState([]);
+  const[showForm,setShowForm]=useState(false);
+    const [newCategory,setNewCategory]=useState(
+      {
+        name:"",
+        description:"",
+
+      }
+    )
 
   const fetchCategories = async () => {
     try {
@@ -21,10 +29,6 @@ function DisplayCategories() {
       console.log(err);
     }
   };
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
 
   async function handleDeleteCategory(categoryId) {
     
@@ -46,8 +50,40 @@ function DisplayCategories() {
 
   }
 
+const handleAddCategory = async (e) => {
+  e.preventDefault();
+
+  try {
+    const res = await api.post("/admin/categories", newCategory);
+
+    if (res.status !== 201) {
+      toast.error(res.data.message);
+      return;
+    }
+
+    setCategories((prev) => [...prev, newCategory]);
+    toast.success(res.data.message || "added successfully");
+    setShowForm(false);
+    fetchCategories();
+  } catch (err) {
+    toast.error(
+      err.response?.data?.message || "Registration failed"
+    );
+  }
+};
+
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+
   return (
     <>
+
+      <button onClick={()=>setShowForm(!showForm)}>
+        Add category
+      </button>
 
       <h3>Categories</h3>
       <table>
@@ -75,6 +111,37 @@ function DisplayCategories() {
           })}
         </tbody>
       </table>
+        {showForm && (
+          <form onSubmit={handleAddCategory}>
+            <input
+              type="text"
+              name="name"
+              id="name"
+              value={newCategory.name}
+              onChange={(e) =>
+                setNewCategory({ ...newCategory, name: e.target.value })
+              }
+              required
+              placeholder="name"
+            />
+
+            <input
+              type="tesxt"
+              name="description"
+              id="description"
+              value={newCategory.description}
+              onChange={(e) =>
+                setNewCategory({ ...newCategory, description: e.target.value })
+              }
+              required
+              placeholder="description"
+            />
+
+              <button type="submit">Add</button>
+          </form>
+        )}
+
+
     </>
   );
 }
